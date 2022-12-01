@@ -12,7 +12,7 @@ export interface PlaylistModel {
 export type PlaylistModelWithId = PlaylistModel & { id: string };
 
 const schema = new Schema<PlaylistModel>({
-  color: { type: String, default: false },
+  color: { type: String, required: false },
   name: { type: String, required: true },
   owner: { type: String, required: true },
   slug: { type: String, required: true },
