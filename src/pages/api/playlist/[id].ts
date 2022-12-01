@@ -1,6 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import { dbConnect } from "~/libraries/mongoose.library";
-import { Playlist } from "~/models/Playlist.model";
+import Playlist from "~/models/Playlist.model";
+import { DEFAULT_CARD_COLOR } from "~/config/common.config";
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,20 +12,26 @@ export default async function handler(
   await dbConnect();
 
   if (req.method === "GET") {
-    const students = await getPlaylist(id as string);
-    res.status(200).send({ data: students });
+    const playlist = await getPlaylist(id as string);
+    res.status(200).send({ data: playlist });
   } else if (req.method === "DELETE") {
     await deletePlaylist(id as string);
-    res.status(200).send({});
+    res.status(200).send({ data: null });
   }
 }
 
 async function getPlaylist(id: string) {
   const result = await Playlist.findById(id);
   if (!result) return null;
-  const student = result.toObject();
+  const playlist = result.toObject();
   return {
-    name: student.name,
+    name: playlist.name,
+    owner: playlist.owner,
+    slug: playlist.slug,
+    spotifyId: playlist.spotifyId,
+    upvote: playlist.upvote,
+    color: playlist.color || DEFAULT_CARD_COLOR,
+    id: playlist._id.toString(),
   };
 }
 
